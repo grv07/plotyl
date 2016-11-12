@@ -19,6 +19,7 @@ from plot import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^data/$', views.plot_data),
+    # url(r'', views.plot_data),
+    url(r'^plot/$', views.plot_data),
     url(r'^live/data/$', views.get_live_data),
 ]

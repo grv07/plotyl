@@ -3,17 +3,21 @@
 <head>
 	<title>Plot Data</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.js"></script> -->
     <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.1.1.min.js"></script>
 </head>
 <body>
 <div id="myDiv" ></div>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
 </body>
 <script type="text/javascript">
     var url = '/live/data/';
     var offset = 0;
     var limit = 0;
-    var max_size = 10;
+    var max_size = 30;
     var data = []
+    var sleepTime = 5;
+    var count = 5
 	
 	var trace1 = {
 			  x: [],
@@ -22,13 +26,42 @@
 			  mode: 'markers',
 			  marker: {
 			    color: [],
-			    size: []
-			  }
+			    size: [],  
+			  },
+			  type: 'scatter'
 			};
+
+	var percentColors = [
+    { pct: 0.0, color: { r: 0xff, g: 0x00, b: 0 } },
+    { pct: 0.5, color: { r: 0xff, g: 0xff, b: 0 } },
+    { pct: 1.0, color: { r: 0x00, g: 0xff, b: 0 } } ];
+
+	var getColorForPercentage = function(pct) {
+	    for (var i = 1; i < percentColors.length - 1; i++) {
+	        if (pct < percentColors[i].pct) {
+	            break;
+	        }
+	    }
+	    var lower = percentColors[i - 1];
+	    var upper = percentColors[i];
+	    var range = upper.pct - lower.pct;
+	    var rangePct = (pct - lower.pct) / range;
+	    var pctLower = 1 - rangePct;
+	    var pctUpper = rangePct;
+	    var color = {
+	        r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+	        g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+	        b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+	    };
+	    return 'rgb(' + [color.r, color.g, color.b].join(',') + ')';
+	    // or output as hex if preferred
+	}  		
+			
+			
 
 	function plotData(data, is_update){
 		var layout = {
-		  title: 'Bubble Chart Hover Text',
+		  title: 'Cell Phone Sensor Network',
 		  showlegend: false,
 		  height: 1000,
 		  width: 1000,
@@ -50,42 +83,76 @@
 		  dataType: "json",
 		  async: false,
 		  success: function(response){
-	
 			  var parsed_data = JSON.parse(response);
-			  $.each( parsed_data, function(index, value) {
-				  trace1.x.push(value.pos_x);
-				  trace1.y.push(value.pos_y);
-				  trace1.text.push(value.imsi+'/nSignal: '+value.rssi);
-				  if(value.rssi <= -70){
-				  	trace1.marker.color.push('rgb(255, 144, 14)');
-				  }
-				  else if(value.rssi > -70 && value.rssi <= -100){
-				  	trace1.marker.color.push('rgb(44, 160, 101)');
-				  }
-				  else if(value.rssi > -100){
-				  	trace1.marker.color.push('rgb(255, 65, 54)');
-				  }
+			  count = sleepTime;
 
-				  trace1.marker.size.push(10);
-				});
+			  if (parsed_data.length > 0){
+				  $.each( parsed_data, function(index, value) {
+					  trace1.x.push(value.pos_x);
+					  trace1.y.push(value.pos_y);
+					  trace1.text.push(value.imsi+' Signal: '+value.rssi);
+					  // console.log(getColorForPercentage(-60));
+					  if(value.rssi >= -90){
+					  	trace1.marker.color.push();
+					  }
+					  else if(value.rssi <= -90 && value.rssi >= 110 ){
+					  	trace1.marker.color.push();
+					  }
+					  else if(value.rssi <= -90){
+					  	trace1.marker.color.push();
+					  }
+					  else{
+					  	trace1.marker.color.push();
+					  }
+					  
+					  trace1.marker.size.push(15);
+					});
+				  	// Increase offset and limit variable ...
+				  	increaseLimit(true);
 
-			  	if (offset != 0){
-					plotData(data, true);
-				}
-				else{
-					data.push(trace1);
-			  		plotData(data, false);
-			  	}
+				  	if (offset != 0){
+						plotData(data, true);
+					}
+					else{
+						data.push(trace1);
+				  		plotData(data, false);
+				  	}
+			  }
+			 else{
+			 	console.log('No data on server');
+			 	if(sleepTime < 20){
+			 		sleepTime = sleepTime +5;
+			 		count = sleepTime;
+			 		console.log('Now Sleep is: '+sleepTime);
+			 	}
+			 	// Increase get-data sleep time when no data on server.
+			 } 
+
 		  }
 		});
 	}
 
+	function increaseLimit(dataLen){
+		if (dataLen > 0){
+			if (limit!=0){
+		    		offset = limit;
+		    	}
+		    	limit = limit+max_size;
+	    }
+	};
+
+	// Initialize my limit and offset
+	increaseLimit(1);
+
+	// Every secound reduse one from sleepTime to make a server call.
 	setInterval(function(){
-    	if (limit!=0){
-    		offset = limit;
-    	}
-    	limit = limit+max_size;
-		get_data(limit, offset);
-	}, 5000);
+		if(count <= 0){
+			get_data(limit, offset);
+		}
+		else{
+			--count;
+		}
+	},1000)
+
 </script>
 </html>

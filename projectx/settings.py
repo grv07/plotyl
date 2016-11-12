@@ -72,6 +72,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'projectx.wsgi.application'
 
+APPEND_SLASH = False
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases

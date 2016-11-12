@@ -10,6 +10,8 @@ import json
 def get_live_data(request):
 	my_queryset = Phone.objects.all().order_by('id')[int(request.GET.get('offset')):int(request.GET.get('limit'))]
 	result_list = list(my_queryset.values('pos_x', 'pos_y', 'imsi', 'rssi', 'time'))
+	# Update json accor..
+	# result_list = [{'x':data.pos_x, 'y':data.pos_y, 'name':data.imsi, 'z':2} for data in  my_queryset]
 	return JsonResponse(json.dumps(result_list), safe=False)
 
 @csrf_exempt
