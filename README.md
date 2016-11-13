@@ -1,7 +1,7 @@
 # How to start django steps
-1. create virtualenv.
-2. clone project and install all req.txt.
-3. create DB in mysql root:root with database gram.
+1. Create virtualenv.
+2. Clone project and install all req.txt.
+3. Create DB in mysql root:root with database gram.
 4. cd ~/asign/projectx and run follow commands
   ./manage makemigrations
   ./manage migrate
