@@ -17,14 +17,13 @@ def get_live_data(request):
 		# result_list = [{'x':data.pos_x, 'y':data.pos_y, 'name':data.imsi, 'z':2} for data in  my_queryset]
 		return JsonResponse(json.dumps(result_list), safe=False)
 	except Exception as e:
-		return JsonResponse({'msg':'Out of data'}, safe=False, status=500)	
+		return JsonResponse({'msg': 'Out of data'}, safe=False, status=500)	
 
 @csrf_exempt
 def plot_data(request):
 	# Save data on POST call ..
-	print(request.POST)
 	if request.method == 'POST':
-		pf = PhoneForm(request.POST)
+		pf = PhoneForm(json.loads(request.body.decode("utf-8")))
 		# Validate all POST data user send
 		if pf.is_valid():
 			obj = pf.save()
