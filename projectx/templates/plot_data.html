@@ -76,6 +76,7 @@
 		}
 	}
 	
+	// Ajax call fire to get data from server
 	function get_data(limit, offset){
 		$.ajax({
 		  url: url,
@@ -87,24 +88,21 @@
 			  count = sleepTime;
 
 			  if (parsed_data.length > 0){
+			  	  // Update sleep time again
+			  	  sleepTime = 5; 
 				  $.each( parsed_data, function(index, value) {
 					  trace1.x.push(value.pos_x);
 					  trace1.y.push(value.pos_y);
 					  trace1.text.push(value.imsi+' Signal: '+value.rssi);
-					  // console.log(getColorForPercentage(-60));
-					  if(value.rssi >= -90){
-					  	trace1.marker.color.push();
+					  if(value.rssi >= -95){
+					  	trace1.marker.color.push('rgb(0,128,0)');
 					  }
-					  else if(value.rssi <= -90 && value.rssi >= 110 ){
-					  	trace1.marker.color.push();
-					  }
-					  else if(value.rssi <= -90){
-					  	trace1.marker.color.push();
+					  else if(value.rssi >= -100){
+					  	trace1.marker.color.push('rgb(128,0,0)');
 					  }
 					  else{
-					  	trace1.marker.color.push();
+					  	trace1.marker.color.push('rgb(128,128,0)');
 					  }
-					  
 					  trace1.marker.size.push(15);
 					});
 				  	// Increase offset and limit variable ...
