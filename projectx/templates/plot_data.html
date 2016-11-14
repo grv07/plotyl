@@ -57,15 +57,11 @@
 	    // or output as hex if preferred
 	}  		
 			
-			
 
 	function plotData(data, is_update){
 		var layout = {
-		  title: 'Cell Phone Sensor Network',
-		  showlegend: false,
-		  height: 1000,
-		  width: 1000,
-		  legend: { "tracetoggle": true }
+			hovermode:'closest',
+		  	title: 'Cell Phone Sensor Network',
 		};
 		
 		if(is_update){
@@ -98,10 +94,12 @@
 					  	trace1.marker.color.push('rgb(0,128,0)');
 					  }
 					  else if(value.rssi >= -100){
-					  	trace1.marker.color.push('rgb(128,0,0)');
+					  	trace1.marker.color.push('rgb(128,128,0)');
+					  	// trace1.marker.color.push('rgb(128,0,0)');
 					  }
 					  else{
-					  	trace1.marker.color.push('rgb(128,128,0)');
+					  	// trace1.marker.color.push('rgb(128,128,0)');
+					  	trace1.marker.color.push('rgb(128,0,0)');
 					  }
 					  trace1.marker.size.push(15);
 					});
